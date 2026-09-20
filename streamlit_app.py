@@ -23,11 +23,15 @@ questions = [
     }
 ]
 
+# Remember where the student is
 if "current_question" not in st.session_state:
     st.session_state.current_question = 0
 
 if "score" not in st.session_state:
     st.session_state.score = 0
+
+if "answered" not in st.session_state:
+    st.session_state.answered = False
 
 question = questions[st.session_state.current_question]
 
@@ -40,7 +44,10 @@ answer = st.radio(
     question["answers"]
 )
 
+# Submit button
 if st.button("Submit"):
+
+    st.session_state.answered = True
 
     if answer == question["correct"]:
         st.success("Correct! 🎉")
@@ -50,11 +57,18 @@ if st.button("Submit"):
 
     st.write(f"Skill: {question['skill']}")
 
+# Next Question button
+if st.session_state.answered:
+
     if st.session_state.current_question < len(questions) - 1:
+
         if st.button("Next Question"):
             st.session_state.current_question += 1
+            st.session_state.answered = False
             st.rerun()
+
     else:
         st.success(
-            f"You finished! Score: {st.session_state.score} / {len(questions)}"
+            f"You finished! Score: "
+            f"{st.session_state.score} / {len(questions)}"
         )
