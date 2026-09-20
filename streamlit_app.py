@@ -4,6 +4,7 @@ supabase = create_client(
     st.secrets["SUPABASE_URL"],
     st.secrets["SUPABASE_KEY"]
 )
+st.success("Connected to Supabase! 🎉")
 
 st.title("SAT Prep App 🚀")
 st.write("Adaptive SAT practice")
