@@ -1,11 +1,7 @@
 import streamlit as st
 
 st.title("SAT Prep App 🚀")
-st.write("Adaptive SAT practice that adjusts to your skills.")
-
-# -----------------------------
-# QUESTION BANK
-# -----------------------------
+st.write("Adaptive SAT practice")
 
 questions = [
     {
@@ -16,7 +12,6 @@ questions = [
         "difficulty": 1,
         "explanation": "Subtract 5 from both sides: x = 7."
     },
-
     {
         "question": "What is x if 3x + 6 = 21?",
         "choices": ["3", "5", "7", "9"],
@@ -25,7 +20,6 @@ questions = [
         "difficulty": 2,
         "explanation": "Subtract 6: 3x = 15. Divide by 3: x = 5."
     },
-
     {
         "question": "What is 20% of 50?",
         "choices": ["5", "10", "15", "20"],
@@ -34,7 +28,6 @@ questions = [
         "difficulty": 1,
         "explanation": "20% of 50 is 10."
     },
-
     {
         "question": "If x² = 49, what could x be?",
         "choices": ["5", "6", "7 or -7", "9"],
@@ -43,7 +36,6 @@ questions = [
         "difficulty": 1,
         "explanation": "The square root of 49 is 7, so x can be 7 or -7."
     },
-
     {
         "question": "If x² - 9 = 0, what are the possible values of x?",
         "choices": ["3 only", "-3 only", "3 or -3", "9"],
@@ -52,7 +44,6 @@ questions = [
         "difficulty": 2,
         "explanation": "Add 9 to both sides: x² = 9. Therefore x = 3 or x = -3."
     },
-
     {
         "question": "If x² - 5x + 6 = 0, what are the possible values of x?",
         "choices": ["1 and 6", "2 and 3", "3 and 4", "1 and 5"],
@@ -63,10 +54,9 @@ questions = [
     }
 ]
 
-
-# -----------------------------
-# START SESSION
-# -----------------------------
+# -------------------------
+# SESSION STATE
+# -------------------------
 
 if "current_question" not in st.session_state:
     st.session_state.current_question = 0
@@ -83,19 +73,10 @@ if "answered" not in st.session_state:
 if "finished" not in st.session_state:
     st.session_state.finished = False
 
-if "answered_questions" not in st.session_state:
-    st.session_state.answered_questions = []
 
-if "personalized_question" not in st.session_state:
-    st.session_state.personalized_question = None
-
-if "personalized_answered" not in st.session_state:
-    st.session_state.personalized_answered = False
-
-
-# -----------------------------
-# MAIN PRACTICE
-# -----------------------------
+# -------------------------
+# PRACTICE QUESTIONS
+# -------------------------
 
 if not st.session_state.finished:
 
@@ -108,12 +89,11 @@ if not st.session_state.finished:
 
     st.write(question["question"])
 
-    # Convert choices into A/B/C/D
-    choice_letters = ["A", "B", "C", "D"]
+    choices = ["A", "B", "C", "D"]
 
     options = [
         f"{letter}) {choice}"
-        for letter, choice in zip(choice_letters, question["choices"])
+        for letter, choice in zip(choices, question["choices"])
     ]
 
     selected = st.radio(
@@ -125,24 +105,16 @@ if not st.session_state.finished:
     if st.button("Submit Answer"):
 
         selected_letter = selected[0]
-
         skill = question["skill"]
 
-        # Create skill if it doesn't exist
         if skill not in st.session_state.skill_results:
             st.session_state.skill_results[skill] = {
                 "correct": 0,
                 "total": 0
             }
 
-        # Record this question
         st.session_state.skill_results[skill]["total"] += 1
 
-        st.session_state.answered_questions.append(
-            st.session_state.current_question
-        )
-
-        # Check answer
         if selected_letter == question["answer"]:
 
             st.success("✅ Correct!")
@@ -164,10 +136,151 @@ if not st.session_state.finished:
 
         st.session_state.answered = True
 
+    # -------------------------
+    # NEXT QUESTION
+    # -------------------------
 
-    # Next question button
     if st.session_state.answered:
 
         if st.session_state.current_question < len(questions) - 1:
 
-            if st.button("Next Question ➡
+            if st.button("Next Question ➡️"):
+
+                st.session_state.current_question += 1
+                st.session_state.answered = False
+
+                st.rerun()
+
+        else:
+
+            if st.button("Finish Practice 🎯"):
+
+                st.session_state.finished = True
+
+                st.rerun()
+
+
+# -------------------------
+# RESULTS
+# -------------------------
+
+else:
+
+    st.header("🎯 Your Results")
+
+    st.write(
+        f"Overall Score: "
+        f"**{st.session_state.score} / {len(questions)}**"
+    )
+
+    st.subheader("Skill Performance")
+
+    weakest_skill = None
+    weakest_percentage = 101
+
+    for skill, results in st.session_state.skill_results.items():
+
+        percentage = (
+            results["correct"] /
+            results["total"]
+        ) * 100
+
+        st.write(
+            f"**{skill}:** "
+            f"{results['correct']} / {results['total']} "
+            f"({round(percentage)}%)"
+        )
+
+        if percentage < weakest_percentage:
+
+            weakest_percentage = percentage
+            weakest_skill = skill
+
+    st.divider()
+
+    st.subheader("🧠 Adaptive Recommendation")
+
+    st.write(
+        f"Your weakest skill is **{weakest_skill}** "
+        f"with **{round(weakest_percentage)}%**."
+    )
+
+    if weakest_percentage < 50:
+
+        recommended_difficulty = 1
+
+    elif weakest_percentage < 80:
+
+        recommended_difficulty = 2
+
+    else:
+
+        recommended_difficulty = 3
+
+    st.write(
+        f"Recommended difficulty: "
+        f"**{recommended_difficulty}**"
+    )
+
+    # Find personalized question
+
+    personalized_question = None
+
+    for question in questions:
+
+        if (
+            question["skill"] == weakest_skill
+            and question["difficulty"] == recommended_difficulty
+        ):
+
+            personalized_question = question
+            break
+
+    if personalized_question:
+
+        st.subheader("🔥 Personalized Practice")
+
+        st.write(
+            personalized_question["question"]
+        )
+
+        choices = ["A", "B", "C", "D"]
+
+        options = [
+            f"{letter}) {choice}"
+            for letter, choice in zip(
+                choices,
+                personalized_question["choices"]
+            )
+        ]
+
+        practice_answer = st.radio(
+            "Choose your answer:",
+            options,
+            key="personalized_question"
+        )
+
+        if st.button("Submit Personalized Practice"):
+
+            selected_letter = practice_answer[0]
+
+            if (
+                selected_letter ==
+                personalized_question["answer"]
+            ):
+
+                st.success("🎉 Correct!")
+
+            else:
+
+                st.error("❌ Not quite.")
+
+                st.write(
+                    f"Correct answer: "
+                    f"{personalized_question['answer']}"
+                )
+
+            st.info(
+                f"**Explanation:** "
+                f"{personalized_question['explanation']}"
+            )
