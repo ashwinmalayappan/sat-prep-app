@@ -1,4 +1,5 @@
 import streamlit as st
+from supabase import create_client
 
 st.title("SAT Prep App 🚀")
 st.write("Adaptive SAT practice")
