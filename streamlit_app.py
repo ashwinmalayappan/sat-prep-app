@@ -290,3 +290,16 @@ else:
                 f"**Explanation:** "
                 f"{personalized_question['explanation']}"
             )
+
+
+st.divider()
+
+st.header("🔐 Admin")
+
+admin_password = st.text_input(
+    "Admin password",
+    type="password"
+)
+
+if admin_password == "CHANGE_THIS_PASSWORD":
+    st.success("Admin access granted! 🔓")
