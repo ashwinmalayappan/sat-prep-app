@@ -1,74 +1,173 @@
 import streamlit as st
 
 st.title("SAT Prep App 🚀")
+st.write("Adaptive SAT practice that adjusts to your skills.")
+
+# -----------------------------
+# QUESTION BANK
+# -----------------------------
 
 questions = [
     {
-        "question": "What is 3x + 6 = 21?",
-        "answers": ["A) 3", "B) 5", "C) 7", "D) 9"],
-        "correct": "B) 5",
-        "skill": "Linear Equations"
+        "question": "What is x if x + 5 = 12?",
+        "choices": ["5", "6", "7", "8"],
+        "answer": "C",
+        "skill": "Linear Equations",
+        "difficulty": 1,
+        "explanation": "Subtract 5 from both sides: x = 7."
     },
+
+    {
+        "question": "What is x if 3x + 6 = 21?",
+        "choices": ["3", "5", "7", "9"],
+        "answer": "B",
+        "skill": "Linear Equations",
+        "difficulty": 2,
+        "explanation": "Subtract 6: 3x = 15. Divide by 3: x = 5."
+    },
+
     {
         "question": "What is 20% of 50?",
-        "answers": ["A) 5", "B) 10", "C) 15", "D) 20"],
-        "correct": "B) 10",
-        "skill": "Percentages"
+        "choices": ["5", "10", "15", "20"],
+        "answer": "B",
+        "skill": "Percentages",
+        "difficulty": 1,
+        "explanation": "20% of 50 is 10."
     },
+
     {
-        "question": "What is x + 7 = 15?",
-        "answers": ["A) 6", "B) 7", "C) 8", "D) 9"],
-        "correct": "C) 8",
-        "skill": "Linear Equations"
+        "question": "If x² = 49, what could x be?",
+        "choices": ["5", "6", "7 or -7", "9"],
+        "answer": "C",
+        "skill": "Quadratics",
+        "difficulty": 1,
+        "explanation": "The square root of 49 is 7, so x can be 7 or -7."
+    },
+
+    {
+        "question": "If x² - 9 = 0, what are the possible values of x?",
+        "choices": ["3 only", "-3 only", "3 or -3", "9"],
+        "answer": "C",
+        "skill": "Quadratics",
+        "difficulty": 2,
+        "explanation": "Add 9 to both sides: x² = 9. Therefore x = 3 or x = -3."
+    },
+
+    {
+        "question": "If x² - 5x + 6 = 0, what are the possible values of x?",
+        "choices": ["1 and 6", "2 and 3", "3 and 4", "1 and 5"],
+        "answer": "B",
+        "skill": "Quadratics",
+        "difficulty": 3,
+        "explanation": "Factor the equation: (x - 2)(x - 3) = 0. Therefore x = 2 or x = 3."
     }
 ]
 
-# Remember where the student is
+
+# -----------------------------
+# START SESSION
+# -----------------------------
+
 if "current_question" not in st.session_state:
     st.session_state.current_question = 0
 
 if "score" not in st.session_state:
     st.session_state.score = 0
 
+if "skill_results" not in st.session_state:
+    st.session_state.skill_results = {}
+
 if "answered" not in st.session_state:
     st.session_state.answered = False
 
-question = questions[st.session_state.current_question]
+if "finished" not in st.session_state:
+    st.session_state.finished = False
 
-st.subheader(f"Question {st.session_state.current_question + 1}")
+if "answered_questions" not in st.session_state:
+    st.session_state.answered_questions = []
 
-st.write(question["question"])
+if "personalized_question" not in st.session_state:
+    st.session_state.personalized_question = None
 
-answer = st.radio(
-    "Choose your answer:",
-    question["answers"]
-)
+if "personalized_answered" not in st.session_state:
+    st.session_state.personalized_answered = False
 
-# Submit button
-if st.button("Submit"):
 
-    st.session_state.answered = True
+# -----------------------------
+# MAIN PRACTICE
+# -----------------------------
 
-    if answer == question["correct"]:
-        st.success("Correct! 🎉")
-        st.session_state.score += 1
-    else:
-        st.error("Incorrect ❌")
+if not st.session_state.finished:
 
-    st.write(f"Skill: {question['skill']}")
+    question = questions[st.session_state.current_question]
 
-# Next Question button
-if st.session_state.answered:
+    st.subheader(
+        f"Question {st.session_state.current_question + 1} "
+        f"of {len(questions)}"
+    )
 
-    if st.session_state.current_question < len(questions) - 1:
+    st.write(question["question"])
 
-        if st.button("Next Question"):
-            st.session_state.current_question += 1
-            st.session_state.answered = False
-            st.rerun()
+    # Convert choices into A/B/C/D
+    choice_letters = ["A", "B", "C", "D"]
 
-    else:
-        st.success(
-            f"You finished! Score: "
-            f"{st.session_state.score} / {len(questions)}"
+    options = [
+        f"{letter}) {choice}"
+        for letter, choice in zip(choice_letters, question["choices"])
+    ]
+
+    selected = st.radio(
+        "Choose your answer:",
+        options,
+        key=f"question_{st.session_state.current_question}"
+    )
+
+    if st.button("Submit Answer"):
+
+        selected_letter = selected[0]
+
+        skill = question["skill"]
+
+        # Create skill if it doesn't exist
+        if skill not in st.session_state.skill_results:
+            st.session_state.skill_results[skill] = {
+                "correct": 0,
+                "total": 0
+            }
+
+        # Record this question
+        st.session_state.skill_results[skill]["total"] += 1
+
+        st.session_state.answered_questions.append(
+            st.session_state.current_question
         )
+
+        # Check answer
+        if selected_letter == question["answer"]:
+
+            st.success("✅ Correct!")
+
+            st.session_state.score += 1
+            st.session_state.skill_results[skill]["correct"] += 1
+
+        else:
+
+            st.error("❌ Not quite.")
+
+            st.write(
+                f"Correct answer: {question['answer']}"
+            )
+
+        st.info(
+            f"**Explanation:** {question['explanation']}"
+        )
+
+        st.session_state.answered = True
+
+
+    # Next question button
+    if st.session_state.answered:
+
+        if st.session_state.current_question < len(questions) - 1:
+
+            if st.button("Next Question ➡
