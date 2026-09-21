@@ -302,4 +302,44 @@ admin_password = st.text_input(
 )
 
 if admin_password == "CHANGE_THIS_PASSWORD":
+
     st.success("Admin access granted! 🔓")
+
+    st.subheader("➕ Add a Question")
+
+    new_question = st.text_area("Question")
+
+    choice_a = st.text_input("Choice A")
+    choice_b = st.text_input("Choice B")
+    choice_c = st.text_input("Choice C")
+    choice_d = st.text_input("Choice D")
+
+    correct_answer = st.selectbox(
+        "Correct answer",
+        ["A", "B", "C", "D"]
+    )
+
+    skill = st.text_input("Skill")
+
+    difficulty = st.selectbox(
+        "Difficulty",
+        [1, 2, 3]
+    )
+
+    explanation = st.text_area("Explanation")
+
+    if st.button("Add Question ➕"):
+
+        supabase.table("questions").insert({
+            "question": new_question,
+            "choice_a": choice_a,
+            "choice_b": choice_b,
+            "choice_c": choice_c,
+            "choice_d": choice_d,
+            "correct_answer": correct_answer,
+            "skill": skill,
+            "difficulty": difficulty,
+            "explanation": explanation
+        }).execute()
+
+        st.success("Question added to the database! 🎉")
