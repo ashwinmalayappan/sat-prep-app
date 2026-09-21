@@ -188,6 +188,7 @@ else:
     )
 
     st.subheader("Skill Performance")
+
     weakest_skill = None
     weakest_percentage = 101
 
@@ -208,12 +209,13 @@ else:
 
             weakest_percentage = percentage
             weakest_skill = skill
-    
+
     st.divider()
 
     st.subheader("🧠 Adaptive Recommendation")
 
     if weakest_skill is None:
+
         st.info(
             "Answer some questions first, "
             "then I'll identify your weakest skill."
@@ -237,7 +239,7 @@ else:
             recommended_difficulty = 2
 
         else:
-        
+
             recommended_difficulty = 3
 
         st.write(
@@ -245,28 +247,26 @@ else:
             f"**{recommended_difficulty}**"
         )
 
+    personalized_question = None
 
-personalized_question = None
+    if weakest_skill is not None:
 
-if weakest_skill is not None:
+        for question in questions:
 
-    for question in questions:
+            if (
+                question["skill"] == weakest_skill
+                and
+                question["difficulty"] == recommended_difficulty
+                and
+                question["question"] != current_question_text
+            ):
 
-        if (
-            question["skill"] == weakest_skill
-            and
-            question["difficulty"] == recommended_difficulty
-            and
-            question["question"] != current_question_text
-        ):
+                personalized_question = question
+                break
 
-            personalized_question = question
-            break
+    if personalized_question is not None:
 
-if personalized_question is not None:
-    st.session_state.adaptive_question = personalized_question
-                
-    if personalized_question:
+        st.session_state.adaptive_question = personalized_question
 
         st.subheader("🔥 Personalized Practice")
 
@@ -311,8 +311,6 @@ if personalized_question is not None:
                 f"**Explanation:** "
                 f"{personalized_question['explanation']}"
             )
-
-
 # ============================================================
 # ADMIN SECTION
 # ============================================================
