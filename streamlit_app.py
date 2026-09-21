@@ -151,6 +151,42 @@ if not st.session_state.finished:
         )
 
         st.session_state.answered = True
+            # Find weakest skill
+            weakest_skill = None
+            weakest_percentage = 101
+
+            for skill, results in st.session_state.skill_results.items():
+
+                percentage = (
+                    results["correct"] /
+                    results["total"]
+                ) * 100
+
+                if percentage < weakest_percentage:
+                    weakest_percentage = percentage
+                    weakest_skill = skill
+
+        # Choose adaptive difficulty
+        if weakest_percentage < 50:
+            recommended_difficulty = 1
+        elif weakest_percentage < 80:
+            recommended_difficulty = 2
+        else:
+            recommended_difficulty = 3
+    
+        # Find a question for the weakest skill
+            if weakest_skill is not None:
+
+                for adaptive_q in questions:
+
+                    if (
+                    adaptive_q["skill"] == weakest_skill
+                    and adaptive_q["difficulty"] == recommended_difficulty
+                    and adaptive_q["question"] != question["question"]
+            ):
+
+                    st.session_state.adaptive_question = adaptive_q
+                    break
 
     if st.session_state.answered:
 
