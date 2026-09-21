@@ -494,7 +494,7 @@ else:
                 df.to_dict("records")
             )
 
-            supabase.table(
+            admin_supabase.table(
                 "questions"
             ).insert(
                 questions_to_upload
