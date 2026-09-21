@@ -201,24 +201,23 @@ else:
 
   st.subheader("🧠 Adaptive Recommendation")
 
-  if weakest_skill is None:
+if weakest_skill is None:
 
-      st.info(
-          "Answer some questions first, "
-          "then I'll identify your weakest skill."
+    st.info(
+        "Answer some questions first, "
+        "then I'll identify your weakest skill."
     )
 
-  else:
-      st.write(
-          f"Your weakest skill is **{weakest_skill}** "
-          f"with **{round(weakest_percentage)}%**."
-      )
+    recommended_difficulty = None
 
-    if weakest_skill is None:
+else:
 
-        recommended_difficulty = None
+    st.write(
+        f"Your weakest skill is **{weakest_skill}** "
+        f"with **{round(weakest_percentage)}%**."
+    )
 
-    elif weakest_percentage < 50:
+    if weakest_percentage < 50:
 
         recommended_difficulty = 1
 
@@ -235,20 +234,21 @@ else:
         f"**{recommended_difficulty}**"
     )
 
-    personalized_question = None
 
-    if weakest_skill is not None:
+personalized_question = None
 
-        for question in questions:
+if weakest_skill is not None:
 
-            if (
-                question["skill"] == weakest_skill
-                and
-                question["difficulty"] == recommended_difficulty
-            ):
+    for question in questions:
 
-                personalized_question = question
-                break
+        if (
+            question["skill"] == weakest_skill
+            and
+            question["difficulty"] == recommended_difficulty
+        ):
+
+            personalized_question = question
+            break
                 
     if personalized_question:
 
