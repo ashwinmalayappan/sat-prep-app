@@ -159,11 +159,13 @@ if not st.session_state.finished:
             if st.button("Next Question ➡️"):
 
                 st.session_state.current_question += 1
-                    
+
+                st.session_state.adaptive_question = None
+
                 st.session_state.answered = False
 
                 st.rerun()
-
+                
         else:
 
             if st.button("Finish Practice 🎯"):
@@ -209,28 +211,6 @@ else:
             weakest_skill = skill
 
     st.divider()
-weakest_skill = None
-weakest_percentage = 101
-
-for skill, results in st.session_state.skill_results.items():
-
-    percentage = (
-        results["correct"] /
-        results["total"]
-    ) * 100
-
-    st.write(
-        f"**{skill}:** "
-        f"{results['correct']} / {results['total']} "
-        f"({round(percentage)}%)"
-    )
-
-    if percentage < weakest_percentage:
-
-        weakest_percentage = percentage
-        weakest_skill = skill
-
-st.divider()
 
 st.subheader("🧠 Adaptive Recommendation")
 
