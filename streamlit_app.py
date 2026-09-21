@@ -16,6 +16,10 @@ if "access_token" in st.session_state:
         st.session_state.refresh_token
     )
 
+    supabase.postgrest.auth(
+        st.session_state.access_token
+    )
+
 st.write("Session user:", supabase.auth.get_user())
 
 st.write("Supabase session:", supabase.auth.get_session())
