@@ -1,13 +1,25 @@
 import streamlit as st
 from supabase import create_client
+
+# =========================
+# SUPABASE CONNECTION
+# =========================
+
 supabase = create_client(
     st.secrets["SUPABASE_URL"],
     st.secrets["SUPABASE_KEY"]
 )
-st.success("Connected to Supabase! 🎉")
+
+# =========================
+# APP TITLE
+# =========================
 
 st.title("SAT Prep App 🚀")
 st.write("Adaptive SAT practice")
+
+# =========================
+# QUESTIONS
+# =========================
 
 questions = [
     {
@@ -60,9 +72,9 @@ questions = [
     }
 ]
 
-# -------------------------
+# =========================
 # SESSION STATE
-# -------------------------
+# =========================
 
 if "current_question" not in st.session_state:
     st.session_state.current_question = 0
@@ -79,10 +91,9 @@ if "answered" not in st.session_state:
 if "finished" not in st.session_state:
     st.session_state.finished = False
 
-
-# -------------------------
-# PRACTICE QUESTIONS
-# -------------------------
+# =========================
+# STUDENT PRACTICE
+# =========================
 
 if not st.session_state.finished:
 
@@ -126,6 +137,7 @@ if not st.session_state.finished:
             st.success("✅ Correct!")
 
             st.session_state.score += 1
+
             st.session_state.skill_results[skill]["correct"] += 1
 
         else:
@@ -141,10 +153,6 @@ if not st.session_state.finished:
         )
 
         st.session_state.answered = True
-
-    # -------------------------
-    # NEXT QUESTION
-    # -------------------------
 
     if st.session_state.answered:
 
@@ -165,10 +173,9 @@ if not st.session_state.finished:
 
                 st.rerun()
 
-
-# -------------------------
+# =========================
 # RESULTS
-# -------------------------
+# =========================
 
 else:
 
@@ -228,15 +235,14 @@ else:
         f"**{recommended_difficulty}**"
     )
 
-    # Find personalized question
-
     personalized_question = None
 
     for question in questions:
 
         if (
             question["skill"] == weakest_skill
-            and question["difficulty"] == recommended_difficulty
+            and
+            question["difficulty"] == recommended_difficulty
         ):
 
             personalized_question = question
@@ -270,10 +276,7 @@ else:
 
             selected_letter = practice_answer[0]
 
-            if (
-                selected_letter ==
-                personalized_question["answer"]
-            ):
+            if selected_letter == personalized_question["answer"]:
 
                 st.success("🎉 Correct!")
 
@@ -292,6 +295,10 @@ else:
             )
 
 
+# ============================================================
+# ADMIN SECTION
+# ============================================================
+
 st.divider()
 
 st.header("🔐 Admin")
@@ -304,6 +311,10 @@ admin_password = st.text_input(
 if admin_password == "CHANGE_THIS_PASSWORD":
 
     st.success("Admin access granted! 🔓")
+
+    # =========================
+    # ADD ONE QUESTION
+    # =========================
 
     st.subheader("➕ Add a Question")
 
@@ -343,3 +354,41 @@ if admin_password == "CHANGE_THIS_PASSWORD":
         }).execute()
 
         st.success("Question added to the database! 🎉")
+
+    # =========================
+    # BULK CSV UPLOAD
+    # =========================
+
+    st.subheader("📤 Bulk Upload Questions")
+
+    uploaded_file = st.file_uploader(
+        "Upload a CSV question bank",
+        type=["csv"]
+    )
+
+    if uploaded_file is not None:
+
+        import pandas as pd
+
+        df = pd.read_csv(uploaded_file)
+
+        st.write(
+            f"Found {len(df)} questions."
+        )
+
+        st.dataframe(df)
+
+        if st.button("🚀 Upload Questions to Database"):
+
+            questions_to_upload = df.to_dict(
+                "records"
+            )
+
+            supabase.table("questions").insert(
+                questions_to_upload
+            ).execute()
+
+            st.success(
+                f"🎉 Successfully uploaded "
+                f"{len(questions_to_upload)} questions!"
+            )
