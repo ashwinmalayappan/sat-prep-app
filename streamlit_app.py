@@ -67,6 +67,9 @@ for q in db_questions:
 if "current_question" not in st.session_state:
     st.session_state.current_question = 0
 
+if "adaptive_question" not in st.session_state:
+    st.session_state.adaptive_question = None
+
 if "score" not in st.session_state:
     st.session_state.score = 0
 
@@ -85,8 +88,14 @@ if "finished" not in st.session_state:
 
 if not st.session_state.finished:
 
-    question = questions[st.session_state.current_question]
+    if st.session_state.adaptive_question is not None:
 
+        question = st.session_state.adaptive_question
+
+    else:
+
+        question = questions[st.session_state.current_question]
+        
     st.subheader(
         f"Question {st.session_state.current_question + 1} "
         f"of {len(questions)}"
@@ -149,6 +158,11 @@ if not st.session_state.finished:
             if st.button("Next Question ➡️"):
 
                 st.session_state.current_question += 1
+                
+                if personalized_question is not None:
+                    
+                    st.session_state.adaptive_question = personalized_question
+                    
                 st.session_state.answered = False
 
                 st.rerun()
