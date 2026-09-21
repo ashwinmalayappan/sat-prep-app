@@ -221,8 +221,6 @@ else:
             "then I'll identify your weakest skill."
         )
 
-        recommended_difficulty = None
-
     else:
 
         st.write(
@@ -231,15 +229,12 @@ else:
         )
 
         if weakest_percentage < 50:
-
             recommended_difficulty = 1
 
         elif weakest_percentage < 80:
-
             recommended_difficulty = 2
 
         else:
-
             recommended_difficulty = 3
 
         st.write(
@@ -247,22 +242,63 @@ else:
             f"**{recommended_difficulty}**"
         )
 
-    personalized_question = None
-
-    if weakest_skill is not None:
+        personalized_question = None
 
         for question in questions:
 
             if (
                 question["skill"] == weakest_skill
-                and
-                question["difficulty"] == recommended_difficulty
-                and
-                question["question"] != current_question_text
+                and question["difficulty"] == recommended_difficulty
             ):
 
                 personalized_question = question
                 break
+
+        if personalized_question is not None:
+
+            st.subheader("🔥 Personalized Practice")
+
+            st.write(
+                personalized_question["question"]
+            )
+
+            choices = ["A", "B", "C", "D"]
+
+            options = [
+                f"{letter}) {choice}"
+                for letter, choice in zip(
+                    choices,
+                    personalized_question["choices"]
+                )
+            ]
+
+            practice_answer = st.radio(
+                "Choose your answer:",
+                options,
+                key="personalized_question"
+            )
+
+            if st.button("Submit Personalized Practice"):
+
+                selected_letter = practice_answer[0]
+
+                if selected_letter == personalized_question["answer"]:
+
+                    st.success("🎉 Correct!")
+
+                else:
+
+                    st.error("❌ Not quite.")
+
+                    st.write(
+                        f"Correct answer: "
+                        f"{personalized_question['answer']}"
+                    )
+
+                st.info(
+                    f"**Explanation:** "
+                    f"{personalized_question['explanation']}"
+                )
 
 
 # ============================================================
