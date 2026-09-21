@@ -151,9 +151,9 @@ if not st.session_state.finished:
         )
 
         st.session_state.answered = True
-            # Find weakest skill
-            weakest_skill = None
-            weakest_percentage = 101
+         # Find weakest skill
+         weakest_skill = None
+         weakest_percentage = 101
 
             for skill, results in st.session_state.skill_results.items():
 
