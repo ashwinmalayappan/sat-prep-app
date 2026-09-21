@@ -199,12 +199,20 @@ else:
 
     st.divider()
 
-    st.subheader("🧠 Adaptive Recommendation")
+  st.subheader("🧠 Adaptive Recommendation")
 
-    st.write(
-        f"Your weakest skill is **{weakest_skill}** "
-        f"with **{round(weakest_percentage)}%**."
+  if weakest_skill is None:
+
+      st.info(
+          "Answer some questions first, "
+          "then I'll identify your weakest skill."
     )
+
+  else:
+      st.write(
+          f"Your weakest skill is **{weakest_skill}** "
+          f"with **{round(weakest_percentage)}%**."
+      )
 
     if weakest_percentage < 50:
 
