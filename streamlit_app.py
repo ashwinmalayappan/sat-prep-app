@@ -158,11 +158,7 @@ if not st.session_state.finished:
 
             if st.button("Next Question ➡️"):
 
-                st.session_state.current_question += 1
-
-                st.session_state.adaptive_question = questions[
-                    st.session_state.current_question
-                ]    
+                st.session_state.current_question += 1  
 
                 st.session_state.answered = False
 
