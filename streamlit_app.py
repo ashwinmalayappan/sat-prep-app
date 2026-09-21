@@ -303,14 +303,67 @@ st.divider()
 
 st.header("🔐 Admin")
 
-admin_password = st.text_input(
-    "Admin password",
-    type="password"
-)
+# Create admin login state
+if "admin_logged_in" not in st.session_state:
+    st.session_state.admin_logged_in = False
 
-if admin_password == "CHANGE_THIS_PASSWORD":
+
+# =========================
+# ADMIN LOGIN
+# =========================
+
+if not st.session_state.admin_logged_in:
+
+    st.subheader("Admin Login")
+
+    admin_email = st.text_input(
+        "Admin email"
+    )
+
+    admin_password = st.text_input(
+        "Admin password",
+        type="password"
+    )
+
+    if st.button("🔐 Log In"):
+
+        try:
+
+            response = supabase.auth.sign_in_with_password({
+                "email": admin_email,
+                "password": admin_password
+            })
+
+            st.session_state.admin_logged_in = True
+
+            st.success("Admin login successful! 🔓")
+
+            st.rerun()
+
+        except Exception:
+
+            st.error(
+                "Incorrect email or password."
+            )
+
+
+# =========================
+# ADMIN DASHBOARD
+# =========================
+
+else:
 
     st.success("Admin access granted! 🔓")
+
+    if st.button("Log Out"):
+
+        supabase.auth.sign_out()
+
+        st.session_state.admin_logged_in = False
+
+        st.rerun()
+
+    st.divider()
 
     # =========================
     # ADD ONE QUESTION
@@ -318,48 +371,80 @@ if admin_password == "CHANGE_THIS_PASSWORD":
 
     st.subheader("➕ Add a Question")
 
-    new_question = st.text_area("Question")
+    new_question = st.text_area(
+        "Question"
+    )
 
-    choice_a = st.text_input("Choice A")
-    choice_b = st.text_input("Choice B")
-    choice_c = st.text_input("Choice C")
-    choice_d = st.text_input("Choice D")
+    choice_a = st.text_input(
+        "Choice A"
+    )
+
+    choice_b = st.text_input(
+        "Choice B"
+    )
+
+    choice_c = st.text_input(
+        "Choice C"
+    )
+
+    choice_d = st.text_input(
+        "Choice D"
+    )
 
     correct_answer = st.selectbox(
         "Correct answer",
         ["A", "B", "C", "D"]
     )
 
-    skill = st.text_input("Skill")
+    skill = st.text_input(
+        "Skill"
+    )
 
     difficulty = st.selectbox(
         "Difficulty",
         [1, 2, 3]
     )
 
-    explanation = st.text_area("Explanation")
+    explanation = st.text_area(
+        "Explanation"
+    )
 
     if st.button("Add Question ➕"):
 
         supabase.table("questions").insert({
+
             "question": new_question,
+
             "choice_a": choice_a,
+
             "choice_b": choice_b,
+
             "choice_c": choice_c,
+
             "choice_d": choice_d,
+
             "correct_answer": correct_answer,
+
             "skill": skill,
+
             "difficulty": difficulty,
+
             "explanation": explanation
+
         }).execute()
 
-        st.success("Question added to the database! 🎉")
+        st.success(
+            "Question added to the database! 🎉"
+        )
+
 
     # =========================
     # BULK CSV UPLOAD
     # =========================
 
-    st.subheader("📤 Bulk Upload Questions")
+    st.subheader(
+        "📤 Bulk Upload Questions"
+    )
 
     uploaded_file = st.file_uploader(
         "Upload a CSV question bank",
@@ -370,7 +455,9 @@ if admin_password == "CHANGE_THIS_PASSWORD":
 
         import pandas as pd
 
-        df = pd.read_csv(uploaded_file)
+        df = pd.read_csv(
+            uploaded_file
+        )
 
         st.write(
             f"Found {len(df)} questions."
@@ -378,13 +465,17 @@ if admin_password == "CHANGE_THIS_PASSWORD":
 
         st.dataframe(df)
 
-        if st.button("🚀 Upload Questions to Database"):
+        if st.button(
+            "🚀 Upload Questions to Database"
+        ):
 
-            questions_to_upload = df.to_dict(
-                "records"
+            questions_to_upload = (
+                df.to_dict("records")
             )
 
-            supabase.table("questions").insert(
+            supabase.table(
+                "questions"
+            ).insert(
                 questions_to_upload
             ).execute()
 
