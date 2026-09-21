@@ -150,7 +150,7 @@ if not st.session_state.finished:
             f"**Explanation:** {question['explanation']}"
         )
 
-st.session_state.answered = True
+    st.session_state.answered = True
 
     if st.session_state.answered:
 
