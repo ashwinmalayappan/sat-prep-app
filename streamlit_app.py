@@ -158,10 +158,6 @@ if not st.session_state.finished:
             if st.button("Next Question ➡️"):
 
                 st.session_state.current_question += 1
-                
-                if personalized_question is not None:
-                    
-                    st.session_state.adaptive_question = personalized_question
                     
                 st.session_state.answered = False
 
@@ -284,6 +280,9 @@ if weakest_skill is not None:
 
             personalized_question = question
             break
+
+if personalized_question is not None:
+    st.session_state.adaptive_question = personalized_question
                 
     if personalized_question:
 
