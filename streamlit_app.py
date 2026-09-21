@@ -107,7 +107,7 @@ if not st.session_state.finished:
         key=f"question_{st.session_state.current_question}"
     )
 
-    if st.button("Submit Answer"):
+    if st.button("Submit Answer") and not st.session_state.answered:
 
         selected_letter = selected[0]
         skill = question["skill"]
