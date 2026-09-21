@@ -160,6 +160,8 @@ if not st.session_state.finished:
 
                 st.session_state.current_question += 1  
 
+                st.session_state.adaptive_question = None
+
                 st.session_state.answered = False
 
                 st.rerun()
