@@ -41,6 +41,25 @@ st.write("Adaptive SAT practice")
 # =========================
 
 questions = [
+    # Load questions from Supabase
+db_questions = supabase.table("questions").select("*").execute().data
+
+questions = []
+
+for q in db_questions:
+    questions.append({
+        "question": q["question"],
+        "choices": [
+            q["choice_a"],
+            q["choice_b"],
+            q["choice_c"],
+            q["choice_d"]
+        ],
+        "answer": q["correct_answer"],
+        "skill": q["skill"],
+        "difficulty": q["difficulty"],
+        "explanation": q["explanation"]
+    })
     {
         "question": "What is x if x + 5 = 12?",
         "choices": ["5", "6", "7", "8"],
