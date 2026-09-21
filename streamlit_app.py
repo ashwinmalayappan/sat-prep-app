@@ -266,53 +266,7 @@ else:
                 personalized_question = question
                 break
 
-    if personalized_question is not None:
 
-        st.session_state.adaptive_question = personalized_question
-
-        st.subheader("🔥 Personalized Practice")
-
-        st.write(
-            personalized_question["question"]
-        )
-
-        choices = ["A", "B", "C", "D"]
-
-        options = [
-            f"{letter}) {choice}"
-            for letter, choice in zip(
-                choices,
-                personalized_question["choices"]
-            )
-        ]
-
-        practice_answer = st.radio(
-            "Choose your answer:",
-            options,
-            key="personalized_question"
-        )
-
-        if st.button("Submit Personalized Practice"):
-
-            selected_letter = practice_answer[0]
-
-            if selected_letter == personalized_question["answer"]:
-
-                st.success("🎉 Correct!")
-
-            else:
-
-                st.error("❌ Not quite.")
-
-                st.write(
-                    f"Correct answer: "
-                    f"{personalized_question['answer']}"
-                )
-
-            st.info(
-                f"**Explanation:** "
-                f"{personalized_question['explanation']}"
-            )
 # ============================================================
 # ADMIN SECTION
 # ============================================================
