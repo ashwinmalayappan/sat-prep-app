@@ -336,11 +336,13 @@ if not st.session_state.admin_logged_in:
         try:
 
             response = supabase.auth.sign_in_with_password({
-                "email": admin_email,
-                "password": admin_password
-            })
+    "email": admin_email,
+    "password": admin_password
+})
 
-            st.session_state.admin_logged_in = True
+st.session_state.access_token = response.session.access_token
+st.session_state.refresh_token = response.session.refresh_token
+st.session_state.admin_logged_in = True
 
             st.success("Admin login successful! 🔓")
 
