@@ -214,7 +214,11 @@ else:
           f"with **{round(weakest_percentage)}%**."
       )
 
-    if weakest_percentage < 50:
+    if weakest_skill is None:
+
+        recommended_difficulty = None
+
+    elif weakest_percentage < 50:
 
         recommended_difficulty = 1
 
@@ -233,17 +237,19 @@ else:
 
     personalized_question = None
 
-    for question in questions:
+    if weakest_skill is not None:
 
-        if (
-            question["skill"] == weakest_skill
-            and
-            question["difficulty"] == recommended_difficulty
-        ):
+        for question in questions:
 
-            personalized_question = question
-            break
+            if (
+                question["skill"] == weakest_skill
+                and
+                question["difficulty"] == recommended_difficulty
+            ):
 
+                personalized_question = question
+                break
+                
     if personalized_question:
 
         st.subheader("🔥 Personalized Practice")
