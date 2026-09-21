@@ -10,6 +10,12 @@ supabase = create_client(
     st.secrets["SUPABASE_KEY"]
 )
 
+if "access_token" in st.session_state:
+    supabase.auth.set_session(
+        st.session_state.access_token,
+        st.session_state.refresh_token
+    )
+
 # =========================
 # APP TITLE
 # =========================
