@@ -160,7 +160,17 @@ if not st.session_state.finished:
 
                 st.session_state.current_question += 1  
 
-                st.session_state.adaptive_question = question
+                adaptive_question = None
+
+                for q in questions:
+                    if (
+                        q["skill"] == question["skill"]
+                        and q["question"] != question["question"]
+                    ):
+                        adaptive_question = q
+                        break
+
+                st.session_state.adaptive_question = adaptive_question
 
                 st.session_state.answered = False
 
