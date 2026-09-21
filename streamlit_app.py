@@ -199,10 +199,9 @@ else:
 
     st.divider()
 
-  st.subheader("🧠 Adaptive Recommendation")
+st.subheader("🧠 Adaptive Recommendation")
 
 if weakest_skill is None:
-
     st.info(
         "Answer some questions first, "
         "then I'll identify your weakest skill."
@@ -226,7 +225,7 @@ else:
         recommended_difficulty = 2
 
     else:
-
+        
         recommended_difficulty = 3
 
     st.write(
