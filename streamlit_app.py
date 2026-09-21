@@ -95,6 +95,7 @@ if not st.session_state.finished:
     else:
 
         question = questions[st.session_state.current_question]
+    current_question_text = question["question"]
         
     st.subheader(
         f"Question {st.session_state.current_question + 1} "
@@ -276,6 +277,8 @@ if weakest_skill is not None:
             question["skill"] == weakest_skill
             and
             question["difficulty"] == recommended_difficulty
+            and
+            question["question"] != current_question_text
         ):
 
             personalized_question = question
