@@ -16,6 +16,8 @@ if "access_token" in st.session_state:
         st.session_state.refresh_token
     )
 
+st.write("Supabase user:", supabase.auth.get_user())
+
 # =========================
 # APP TITLE
 # =========================
